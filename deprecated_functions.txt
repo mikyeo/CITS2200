@@ -1,0 +1,120 @@
+#include "eyebot.h"
+#include <stdio.h>
+#include <math.h>
+
+#define CUBES 4
+#define POINTS 180
+
+#define CUBE_R_MIN 70
+#define CUBE_R_MAX 85
+#define CUBE_G_MIN 60
+#define CUBE_G_MAX 75
+#define CUBE_B_MIN 15
+#define CUBE_B_MAX 30
+
+#define X_TARGET 150
+#define Y_TARGET 1800
+
+#define CONV 180/3.14159
+
+#define ARRIVED 0
+#define CUBE_DETECTED 1
+#define CUBE_LOST 2
+#define DRIVE_STALLED 3
+#define OKAY 4
+#define TASK_COMPLETE 5
+
+int positions[CUBES*2] = {500, 500,
+                          500, 1500,
+                          1600, 500,
+                          1600, 1500};
+
+int turnToCube(BYTE *im, int x)
+{
+  int mid;
+  mid = 28800;
+
+  if (x < mid){
+    while (im[x] < (mid - 480)) {
+      VWTurn(-10, 50);
+      refreshImage(im);
+    }
+  }
+  else {
+    while (im[x] > (mid+480)) {
+      VWTurn(10, 50);
+      refreshImage(im);
+    }
+  }
+//  if (x == mid) return TASK_COMPLETE;
+//  return CUBE_LOST;
+return 0;
+}
+
+void moveToCube(int x2, int y2, BYTE *im)
+{
+  int x1, y1, p1;
+  VWGetPosition(&x1, &y1, &p1);
+
+  double diff = (x2 - x1) / (y2 - y1);
+  double conv = 180.0/3.14159;
+
+  int theta = (int) atan(diff) * conv;
+
+  VWTurn(theta, 50);
+  refreshImage(im);
+  int dist = sqrt(pow(x2-x1, 2) + pow(y2-y1, 2));
+
+  VWStraight(dist, 50);
+  //refreshImage(im);
+  LCDPrintf("Cube reached. \n");
+
+}
+
+/*if(angle < 0 && angle > -90){
+        //This is the angle that is used to calculate the distances
+        LCDPrintf("angle: %d\n",angle);
+        int angle_adj = -angle-90;
+
+        //This is the angle that is used to turn once the robot has detected a cube
+        int angle_to_turn = -angle-80;
+        VWTurn(angle_to_turn,50);
+
+        //Calculate the adjacent distance and add the buffer for the distance to drive
+        double adj = cos(angle_adj * CONV) * hypo;       
+        double dist_to_drive = adj + buffer_adj;
+        LCDPrintf("Dist to drive: %f\n", dist_to_drive);
+
+        //Calculate the opposite distance and add the buffer for the distance to drive
+        double opp = sqrt(pow(hypo,2)-pow(adj,2)) + buffer_opp;
+        LCDPrintf("opposite dist: %f\n",opp);
+      
+
+
+      VWWait();
+      VWGetPosition(&X_position, &Y_position, &angle);
+      VWWait();                                                                              
+      VWStraight(dist_to_drive, 50);
+      LCDPrintf("Now pushing: %f\n",dist_to_drive+initial_opp_dist);
+      VWWait();
+      VWTurn(90,50);
+      VWWait();
+      VWStraight(opp,50);
+      VWWait();
+      VWTurn(90,50);
+      VWWait();
+      VWStraight(dist_to_drive+initial_opp_dist-100,50);
+      VWWait();
+      LCDPrintf("X_position: %d\n", X_position);
+      LCDPrintf("Y_position: %d\n", Y_position);
+      driveToCenter(X_position,Y_position);
+      refreshImage(img);
+ 
+      
+      }
+      else {
+      goToCubeAndPush(angle,hypo,initial_cube_x,initial_cube_y);
+      driveToCenter(X_position,Y_position);
+      refreshImage(img);
+      }
+      */

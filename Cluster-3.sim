@@ -1,0 +1,14 @@
+#Environment
+world world1.wld
+settings VIS TRACE
+
+# Robot description file using "S" in maze as start position
+#S4 130 300 90 cluster.x
+S4 1000 1000 0 cluster.x
+
+Crate 500   500   0
+Crate 500   1500  0
+Crate 1600  500   0
+Crate 1600  1500  0
+Crate 1300  1500   0
+#Crate 1650 1286   0
